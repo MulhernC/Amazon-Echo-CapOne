@@ -16,3 +16,9 @@ TransferIntent give account {dollar_amount} dollars
 TransferIntent pay account {cent_amount} cents
 TransferIntent send account {cent_amount} cents
 TransferIntent give account {cent_amount} cents
+ConfirmTransferIntent confirm account transfer
+ConfirmTransferIntent confirm transfer
+DenyTransferIntent decline account transfer
+DenyTransferIntent decline transfer
+DenyTransferIntent deny account transfer
+DenyTransferIntent deny transfer

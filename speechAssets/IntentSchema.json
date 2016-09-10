@@ -15,6 +15,12 @@
       ]
     },
     {
+      "intent": "ConfirmTransferIntent"
+    },
+    {
+      "intent": "DenyTransferIntent"
+    },
+    {
       "intent": "AMAZON.HelpIntent"
     }
   ]

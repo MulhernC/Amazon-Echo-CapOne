@@ -27,6 +27,9 @@ var AlexaSkill = require('./AlexaSkill');
 var CapitalOne = function () {
     AlexaSkill.call(this, APP_ID);
 };
+var dollars = null;
+var cents = null;
+
 
 // Extend AlexaSkill
 CapitalOne.prototype = Object.create(AlexaSkill.prototype);
@@ -53,30 +56,51 @@ CapitalOne.prototype.eventHandlers.onSessionEnded = function (sessionEndedReques
 CapitalOne.prototype.intentHandlers = {
     // register custom intent handlers
     "TransferIntent": function (intent, session, response) {
-        var dollars = intent.slots.dollar_amount.value;
-        var cents = intent.slots.cent_amount.value;
+        dollars = intent.slots.dollar_amount.value;
+        cents = intent.slots.cent_amount.value;
         var responseString = "Would you like to transfer ";
         
-        if (dollars != null && cents != null && dollars != "" && cents != "") {
-            responseString += dollars + " dollar" + (dollars == "1" ? "" : "s") + " and " + cents + " cent" + (cents == "1" ? "" : "s")
-        }
-        else if (dollars != null && dollars != "") {
-            responseString += dollars + " dollar" + (dollars == "1" ? "" : "s")
-        }
-        else if (cents != null && cents != "") {
-            responseString += cents + " cent" + (cents == "1" ? "" : "s")
+        responseString += formatMoney(dollars, cents) + " to account?";
+        response.ask(responseString, "Please confirm your transaction. " + responseString);
+    },
+    "ConfirmTransferIntent": function (intent, session, response) {
+        if (dollars != null || cents != null) {
+            response.tell("Transferring " + formatMoney(dollars, cents) + " to account");
+            dollars = null;
+            cents = null;
         }
         else {
-            response.tell("I'm sorry. I didn't get that. Would you like to perform a bank transaction?");
+            response.tell("Your previous transaction can't be processed. Please try again.");
         }
-        responseString += " to account?"
- 
-        response.ask(responseString, "Please confirm your transaction. " + responseString);
+    },
+    "DenyTransferIntent": function (intent, session, response) {
+        response.tell("Cancelling previous account transfer");
+        dollars = null;
+        cents = null;
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
         response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer five dollars and fifty cents to account");
     }
 };
+
+function formatMoney(dollars, cents) {
+    var responseString = "";
+        
+    if (dollars != null && cents != null && dollars != "" && cents != "") {
+        responseString += dollars + " dollar" + (dollars == "1" ? "" : "s") + " and " + cents + " cent" + (cents == "1" ? "" : "s")
+    }
+    else if (dollars != null && dollars != "") {
+        responseString += dollars + " dollar" + (dollars == "1" ? "" : "s")
+    }
+    else if (cents != null && cents != "") {
+        responseString += cents + " cent" + (cents == "1" ? "" : "s")
+    }
+    else {
+        response.tell("I'm sorry. I didn't get that. Would you like to perform a bank transaction?");
+    }
+
+    return responseString;
+}
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
