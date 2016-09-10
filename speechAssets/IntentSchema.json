@@ -5,6 +5,18 @@
       "slots":
       [
          {
+            "name": "dollar_syn",
+            "type": "DOLLAR_SYN"
+         },
+         {
+            "name": "cent_syn",
+            "type": "CENT_SYN"
+         },
+         {
+            "name": "transfer_syn",
+            "type": "TRANSFER_SYN"
+         },
+         {
             "name": "dollar_amount",
             "type": "AMAZON.NUMBER"
          },
@@ -15,7 +27,14 @@
       ]
     },
     {
-      "intent": "ConfirmTransferIntent"
+      "intent": "ConfirmTransferIntent",
+      "slots":
+      [
+         {
+            "name": "confirm_syn",
+            "type": "CONFIRM_SYN"
+         }
+      ]
     },
     {
       "intent": "DenyTransferIntent"

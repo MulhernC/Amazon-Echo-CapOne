@@ -60,8 +60,8 @@ CapitalOne.prototype.intentHandlers = {
         cents = intent.slots.cent_amount.value;
         var responseString = "Would you like to transfer ";
         
-        responseString += formatMoney(dollars, cents) + " to account?";
-        response.ask(responseString, "Please confirm your transaction. " + responseString);
+        responseString += formatMoney(dollars, cents) + " to account? Please say complete transfer or cancel transfer.";
+        response.ask(responseString, "Please say complete transfer or cancel transfer. " + responseString);
     },
     "ConfirmTransferIntent": function (intent, session, response) {
         if (dollars != null || cents != null) {
@@ -94,9 +94,6 @@ function formatMoney(dollars, cents) {
     }
     else if (cents != null && cents != "") {
         responseString += cents + " cent" + (cents == "1" ? "" : "s")
-    }
-    else {
-        response.tell("I'm sorry. I didn't get that. Would you like to perform a bank transaction?");
     }
 
     return responseString;

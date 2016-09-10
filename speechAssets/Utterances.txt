@@ -1,24 +1,14 @@
-TransferIntent transfer {dollar_amount} dollars and {cent_amount} cents to account
-TransferIntent send {dollar_amount} dollars and {cent_amount} cents to account
-TransferIntent give {dollar_amount} dollars and {cent_amount} cents to account
-TransferIntent transfer {dollar_amount} dollars to account
-TransferIntent send {dollar_amount} dollars to account
-TransferIntent give {dollar_amount} dollars to account
-TransferIntent transfer {cent_amount} cents to account
-TransferIntent send {cent_amount} cents to account
-TransferIntent give {cent_amount} cents to account
-TransferIntent pay account {dollar_amount} dollars and {cent_amount} cents
-TransferIntent send account {dollar_amount} dollars and {cent_amount} cents
-TransferIntent give account {dollar_amount} dollars and {cent_amount} cents
-TransferIntent pay account {dollar_amount} dollars
-TransferIntent send account {dollar_amount} dollars
-TransferIntent give account {dollar_amount} dollars
-TransferIntent pay account {cent_amount} cents
-TransferIntent send account {cent_amount} cents
-TransferIntent give account {cent_amount} cents
-ConfirmTransferIntent confirm account transfer
-ConfirmTransferIntent confirm transfer
+TransferIntent {transfer_syn} {dollar_amount} {dollar_syn} and {cent_amount} {cent_syn} to account
+TransferIntent {transfer_syn} {dollar_amount} {dollar_syn} to account
+TransferIntent {transfer_syn} {cent_amount} {cent_syn} to account
+TransferIntent {transfer_syn} account {dollar_amount} {dollar_syn} and {cent_amount} {cent_syn}
+TransferIntent {transfer_syn} account {dollar_amount} {dollar_syn}
+TransferIntent {transfer_syn} account {cent_amount} {cent_syn}
+ConfirmTransferIntent {confirm_syn} account transfer
+ConfirmTransferIntent {confirm_syn} transfer
 DenyTransferIntent decline account transfer
 DenyTransferIntent decline transfer
 DenyTransferIntent deny account transfer
 DenyTransferIntent deny transfer
+DenyTransferIntent cancel account transfer
+DenyTransferIntent cancel transfer
