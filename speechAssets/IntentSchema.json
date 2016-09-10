@@ -1,7 +1,17 @@
 {
   "intents": [
     {
-      "intent": "HelloWorldIntent"
+      "intent": "TransferIntent",
+      "slots": [
+         {
+            "name": "dollar_amount",
+            "type": "AMAZON.NUMBER"
+         },
+         {
+            "name": "cent_amount",
+            "type": "AMAZON.NUMBER"
+         }
+      ]
     },
     {
       "intent": "AMAZON.HelpIntent"

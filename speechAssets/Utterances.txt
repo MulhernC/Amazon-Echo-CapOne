@@ -1,7 +1,3 @@
-HelloWorldIntent say hello
-HelloWorldIntent say hello world
-HelloWorldIntent hello
-HelloWorldIntent say hi
-HelloWorldIntent say hi world
-HelloWorldIntent hi
-HelloWorldIntent how are you
+TransferIntent transfer {dollar_amount} dollars and {cent_amount} cents to account
+TransferIntent transfer {dollar_amount} dollars to account
+TransferIntent transfer {cent_amount} cents to account
