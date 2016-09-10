@@ -39,14 +39,13 @@ CapitalOne.prototype.eventHandlers.onSessionStarted = function (sessionStartedRe
 };
 
 CapitalOne.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
-    console.log("HelloWorld onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
-    var speechOutput = "Welcome to hello world! Say hello.";
-    var repromptText = "You can say hello.";
-    response.ask(speechOutput, repromptText);
+    console.log("CapitalOne onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
+    var speechOutput = "Welcome to Capital One! You can perform banking transactions.";
+    response.tell(speechOutput);
 };
 
 CapitalOne.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
-    console.log("HelloWorld onSessionEnded requestId: " + sessionEndedRequest.requestId
+    console.log("CapitalOne onSessionEnded requestId: " + sessionEndedRequest.requestId
         + ", sessionId: " + session.sessionId);
     // any cleanup logic goes here
 };
@@ -58,22 +57,24 @@ CapitalOne.prototype.intentHandlers = {
         var cents = intent.slots.cent_amount.value;
         var responseString = "Would you like to transfer ";
         
-        if (dollars != null && cents != null) {
-            responseString += dollars + " dollars and " + cents + " cents"
+        if (dollars != null && cents != null && dollars != "" && cents != "") {
+            responseString += dollars + " dollar" + (dollars == "1" ? "" : "s") + " and " + cents + " cent" + (cents == "1" ? "" : "s")
         }
-        else if (dollars != null) {
-            responseString += dollars + " dollars"
+        else if (dollars != null && dollars != "") {
+            responseString += dollars + " dollar" + (dollars == "1" ? "" : "s")
         }
-        else if (cents != null) {
-            responseString += cents + " cents"
+        else if (cents != null && cents != "") {
+            responseString += cents + " cent" + (cents == "1" ? "" : "s")
+        }
+        else {
+            response.tell("I'm sorry. I didn't get that. Would you like to perform a bank transaction?");
         }
         responseString += " to account?"
  
         response.ask(responseString, "Please confirm your transaction. " + responseString);
-        //response.tellWithCard("Hello World!", "Hello World", "Hello World!");
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
-        response.ask("You can say hello to me!", "You can say hello to me!");
+        response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer five dollars and fifty cents to account");
     }
 };
 
