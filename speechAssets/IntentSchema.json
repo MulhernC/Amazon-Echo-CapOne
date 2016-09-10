@@ -2,7 +2,8 @@
   "intents": [
     {
       "intent": "TransferIntent",
-      "slots": [
+      "slots":
+      [
          {
             "name": "dollar_amount",
             "type": "AMAZON.NUMBER"

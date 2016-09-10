@@ -11,7 +11,7 @@
 /**
  * App ID for the skill
  */
-var APP_ID =  "amzn1.ask.skill.42793609-fc43-482d-9a1a-b75a733cbcbc"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+var APP_ID =  "amzn1.ask.skill.3498e299-c62e-4251-bdcd-42925085447d"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 
 /**
  * The AlexaSkill prototype and helper functions
@@ -54,7 +54,23 @@ CapitalOne.prototype.eventHandlers.onSessionEnded = function (sessionEndedReques
 CapitalOne.prototype.intentHandlers = {
     // register custom intent handlers
     "TransferIntent": function (intent, session, response) {
-        response.tellWithCard("Hello World!", "Hello World", "Hello World!");
+        var dollars = intent.slots.dollar_amount.value;
+        var cents = intent.slots.cent_amount.value;
+        var responseString = "Would you like to transfer ";
+        
+        if (dollars != null && cents != null) {
+            responseString += dollars + " dollars and " + cents + " cents"
+        }
+        else if (dollars != null) {
+            responseString += dollars + " dollars"
+        }
+        else if (cents != null) {
+            responseString += cents + " cents"
+        }
+        responseString += " to account?"
+ 
+        response.ask(responseString, "Please confirm your transaction. " + responseString);
+        //response.tellWithCard("Hello World!", "Hello World", "Hello World!");
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
         response.ask("You can say hello to me!", "You can say hello to me!");
@@ -63,8 +79,8 @@ CapitalOne.prototype.intentHandlers = {
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
-    // Create an instance of the HelloWorld skill.
-    var CapitalOne = new CapitalOne();
-    CapitalOne.execute(event, context);
+    // Create an instance of the CapitalOne skill.
+    var capitalOne = new CapitalOne();
+    capitalOne.execute(event, context);
 };
 

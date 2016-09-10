@@ -1,3 +1,18 @@
 TransferIntent transfer {dollar_amount} dollars and {cent_amount} cents to account
+TransferIntent send {dollar_amount} dollars and {cent_amount} cents to account
+TransferIntent give {dollar_amount} dollars and {cent_amount} cents to account
 TransferIntent transfer {dollar_amount} dollars to account
+TransferIntent send {dollar_amount} dollars to account
+TransferIntent give {dollar_amount} dollars to account
 TransferIntent transfer {cent_amount} cents to account
+TransferIntent send {cent_amount} cents to account
+TransferIntent give {cent_amount} cents to account
+TransferIntent pay account {dollar_amount} dollars and {cent_amount} cents
+TransferIntent send account {dollar_amount} dollars and {cent_amount} cents
+TransferIntent give account {dollar_amount} dollars and {cent_amount} cents
+TransferIntent pay account {dollar_amount} dollars
+TransferIntent send account {dollar_amount} dollars
+TransferIntent give account {dollar_amount} dollars
+TransferIntent pay account {cent_amount} cents
+TransferIntent send account {cent_amount} cents
+TransferIntent give account {cent_amount} cents
