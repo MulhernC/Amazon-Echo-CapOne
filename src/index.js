@@ -56,47 +56,60 @@ CapitalOne.prototype.eventHandlers.onSessionEnded = function (sessionEndedReques
 CapitalOne.prototype.intentHandlers = {
     // register custom intent handlers
     "TransferIntent": function (intent, session, response) {
+        resetMoney();
         dollars = intent.slots.dollar_amount.value;
         cents = intent.slots.cent_amount.value;
-        var responseString = "Would you like to transfer ";
         
-        responseString += formatMoney(dollars, cents) + " to account? Please say complete transfer or cancel transfer.";
-        response.ask(responseString, "Please say complete transfer or cancel transfer. " + responseString);
+        if (dollars == null && cents == null || (isNaN(dollars) && isNaN(cents))) {
+            response.tell("I couldn't understand that. Please try your transfer again.");
+        }
+        else {
+            var responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to account? Please say complete transfer or cancel transfer.";
+            response.ask(responseString, responseString);
+        }
     },
     "ConfirmTransferIntent": function (intent, session, response) {
         if (dollars != null || cents != null) {
             response.tell("Transferring " + formatMoney(dollars, cents) + " to account");
-            dollars = null;
-            cents = null;
+            resetMoney();
         }
         else {
-            response.tell("Your previous transaction can't be processed. Please try again.");
+            response.tell("Your transaction can't be processed. Please try again.");
         }
     },
     "DenyTransferIntent": function (intent, session, response) {
-        response.tell("Cancelling previous account transfer");
-        dollars = null;
-        cents = null;
+        if (dollars != null || cents != null) {
+            response.tell("Cancelling previous account transfer.");
+        }
+        else {
+            response.tell("There is no transfer pending approval.");
+        }
+        resetMoney();
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
-        response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer five dollars and fifty cents to account");
+        response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to account");
     }
 };
 
 function formatMoney(dollars, cents) {
     var responseString = "";
         
-    if (dollars != null && cents != null && dollars != "" && cents != "") {
+    if (dollars != null && cents != null) {
         responseString += dollars + " dollar" + (dollars == "1" ? "" : "s") + " and " + cents + " cent" + (cents == "1" ? "" : "s")
     }
-    else if (dollars != null && dollars != "") {
+    else if (dollars != null) {
         responseString += dollars + " dollar" + (dollars == "1" ? "" : "s")
     }
-    else if (cents != null && cents != "") {
+    else if (cents != null) {
         responseString += cents + " cent" + (cents == "1" ? "" : "s")
     }
 
     return responseString;
+}
+
+function resetMoney() {
+    dollars = null;
+    cents = null;
 }
 
 // Create the handler that responds to the Alexa Request.

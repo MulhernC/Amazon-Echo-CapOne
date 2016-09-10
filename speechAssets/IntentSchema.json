@@ -31,13 +31,28 @@
       "slots":
       [
          {
+            "name": "transfer_syn",
+            "type": "TRANSFER_SYN"
+         },
+         {
             "name": "confirm_syn",
             "type": "CONFIRM_SYN"
          }
       ]
     },
     {
-      "intent": "DenyTransferIntent"
+      "intent": "DenyTransferIntent",
+      "slots":
+      [
+         {
+            "name": "transfer_syn",
+            "type": "TRANSFER_SYN"
+         },
+         {
+            "name": "deny_syn",
+            "type": "DENY_SYN"
+         }
+      ]
     },
     {
       "intent": "AMAZON.HelpIntent"

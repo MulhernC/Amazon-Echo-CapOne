@@ -4,11 +4,7 @@ TransferIntent {transfer_syn} {cent_amount} {cent_syn} to account
 TransferIntent {transfer_syn} account {dollar_amount} {dollar_syn} and {cent_amount} {cent_syn}
 TransferIntent {transfer_syn} account {dollar_amount} {dollar_syn}
 TransferIntent {transfer_syn} account {cent_amount} {cent_syn}
-ConfirmTransferIntent {confirm_syn} account transfer
-ConfirmTransferIntent {confirm_syn} transfer
-DenyTransferIntent decline account transfer
-DenyTransferIntent decline transfer
-DenyTransferIntent deny account transfer
-DenyTransferIntent deny transfer
-DenyTransferIntent cancel account transfer
-DenyTransferIntent cancel transfer
+ConfirmTransferIntent {confirm_syn} account {transfer_syn}
+ConfirmTransferIntent {confirm_syn} {transfer_syn}
+DenyTransferIntent {deny_syn} account {transfer_syn}
+DenyTransferIntent {deny_syn} {transfer_syn}
