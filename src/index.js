@@ -59,8 +59,16 @@ CapitalOne.prototype.intentHandlers = {
         resetMoney();
         dollars = intent.slots.dollar_amount.value;
         cents = intent.slots.cent_amount.value;
+
+        if (dollars == "" || isNaN(dollars)) {
+            dollars = null;
+        }        
+
+        if (cents == "" || isNaN(cents)) {
+            cents = null;
+        }
         
-        if (dollars == null && cents == null || (isNaN(dollars) && isNaN(cents))) {
+        if ((dollars == null && cents == null) || (isNaN(dollars) && isNaN(cents))) {
             response.tell("I couldn't understand that. Please try your transfer again.");
         }
         else {
