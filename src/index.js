@@ -71,6 +71,9 @@ CapitalOne.prototype.intentHandlers = {
         if ((dollars == null && cents == null) || (isNaN(dollars) && isNaN(cents))) {
             response.tell("I couldn't understand that. Please try your transfer again.");
         }
+        if (dollars <= 0 || cents <= 0){
+            response.tell("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
+        }    
         else {
             var responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to account? Please say complete transfer or cancel transfer.";
             response.ask(responseString, responseString);
