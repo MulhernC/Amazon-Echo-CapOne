@@ -1,0 +1,4 @@
+[submodule "REST-API---AmazonEchoMongoDB"]
+	path = REST-API---AmazonEchoMongoDB
+	url = https://github.com/sohombhattacharya/REST-API---AmazonEchoMongoDB.git
+	branch = master
