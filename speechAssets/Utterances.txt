@@ -8,7 +8,8 @@ FriendTransfer {transfer_syn} {dollar_amount} {dollar_syn} and {cent_amount} {ce
                {transfer_syn} {friend_name} {dollar_amount} {dollar_syn} and {cent_amount} {cent_syn}
                {transfer_syn} {friend_name} {dollar_amount} {dollar_syn}
                {transfer_syn} {friend_name} {cent_amount} {cent_syn}
-NameFriendsList
-AddFriend
-CheckBalance
-InternalTransfer
+NameFriendsList {list_syn} {friend_syn}
+                {list_syn} my {friend_syn}              
+AddFriend       {add_syn} (friend_name}
+CheckBalance    {Question} {account} {balance_syn}
+InternalTransfer {transfer_syn} {money} from {account} to {account}
