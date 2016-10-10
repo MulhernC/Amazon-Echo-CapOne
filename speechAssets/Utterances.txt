@@ -1,10 +1,14 @@
-TransferIntent {transfer_syn} {dollar_amount} {dollar_syn} and {cent_amount} {cent_syn} to {friend_name}
-TransferIntent {transfer_syn} {dollar_amount} {dollar_syn} to {friend_name}
-TransferIntent {transfer_syn} {cent_amount} {cent_syn} to {friend_name}
-TransferIntent {transfer_syn} {friend_name} {dollar_amount} {dollar_syn} and {cent_amount} {cent_syn}
-TransferIntent {transfer_syn} {friend_name} {dollar_amount} {dollar_syn}
-TransferIntent {transfer_syn} {friend_name} {cent_amount} {cent_syn}
-ConfirmTransferIntent {confirm_syn} account {transfer_syn}
-ConfirmTransferIntent {confirm_syn} {transfer_syn}
-DenyTransferIntent {deny_syn} account {transfer_syn}
-DenyTransferIntent {deny_syn} {transfer_syn}
+ConfirmTransfer {confirm_syn} account {transfer_syn}
+                {confirm_syn} {transfer_syn}
+DenyTransfer    {deny_syn} {transfer_syn}
+                {deny_syn} account {transfer_syn}
+FriendTransfer {transfer_syn} {dollar_amount} {dollar_syn} and {cent_amount} {cent_syn} to {friend_name}
+               {transfer_syn} {dollar_amount} {dollar_syn} to {friend_name}
+               {transfer_syn} {cent_amount} {cent_syn} to {friend_name}
+               {transfer_syn} {friend_name} {dollar_amount} {dollar_syn} and {cent_amount} {cent_syn}
+               {transfer_syn} {friend_name} {dollar_amount} {dollar_syn}
+               {transfer_syn} {friend_name} {cent_amount} {cent_syn}
+NameFriendsList
+AddFriend
+CheckBalance
+InternalTransfer
