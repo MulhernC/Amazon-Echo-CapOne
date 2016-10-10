@@ -23,6 +23,10 @@
          {
             "name": "cent_amount",
             "type": "AMAZON.NUMBER"
+         },
+         {
+            "name": "friend_name",
+            "type": "AMAZON.US_FIRST_NAME"
          }
       ]
     },

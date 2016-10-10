@@ -29,6 +29,7 @@ var CapitalOne = function () {
 };
 var dollars = null;
 var cents = null;
+var friend = null;
 
 
 // Extend AlexaSkill
@@ -56,9 +57,10 @@ CapitalOne.prototype.eventHandlers.onSessionEnded = function (sessionEndedReques
 CapitalOne.prototype.intentHandlers = {
     // register custom intent handlers
     "TransferIntent": function (intent, session, response) {
-        resetMoney();
+        resetSavedValues();
         dollars = intent.slots.dollar_amount.value;
         cents = intent.slots.cent_amount.value;
+        friend = intent.slots.friend_name.value;
 
         if (dollars == "" || isNaN(dollars)) {
             dollars = null;
@@ -72,14 +74,14 @@ CapitalOne.prototype.intentHandlers = {
             response.tell("I couldn't understand that. Please try your transfer again.");
         }
         else {
-            var responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to account? Please say complete transfer or cancel transfer.";
+            var responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to " + friend + "? Please say complete transfer or cancel transfer.";
             response.ask(responseString, responseString);
         }
     },
     "ConfirmTransferIntent": function (intent, session, response) {
         if (dollars != null || cents != null) {
-            response.tell("Transferring " + formatMoney(dollars, cents) + " to account");
-            resetMoney();
+            response.tell("Transferring " + formatMoney(dollars, cents) + " to " + friend + ".");
+            resetSavedValues();
         }
         else {
             response.tell("Your transaction can't be processed. Please try again.");
@@ -92,10 +94,10 @@ CapitalOne.prototype.intentHandlers = {
         else {
             response.tell("There is no transfer pending approval.");
         }
-        resetMoney();
+        resetSavedValues();
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
-        response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to account");
+        response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to John");
     }
 };
 
@@ -115,7 +117,7 @@ function formatMoney(dollars, cents) {
     return responseString;
 }
 
-function resetMoney() {
+function resetSavedValues() {
     dollars = null;
     cents = null;
 }
