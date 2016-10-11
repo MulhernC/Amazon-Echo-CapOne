@@ -22,7 +22,7 @@ if (cents == "" || isNaN(cents)) {
 if ((dollars == null && cents == null) || (isNaN(dollars) && isNaN(cents))) {
    console.log("I couldn't understand that. Please try your transfer again.");
 }
-if (dollars <= 0 || cents <= 0){
+if ((dollars != null && dollars <= 0) || (cents != null && cents <= 0)){
    console.log("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
 }    
 else {
@@ -38,6 +38,11 @@ else {
          var friendCount = friends.length;
          var responseCount = 0;
 
+         var fakeObj = {
+            first_name: "melinda",
+            last_name: "fakeName"
+         };
+         transferTo.push(fakeObj);
          for (var i = 0; i < friends.length; i++) {
             processFriend(friends[i], function(obj) {
                responseCount++;
@@ -46,7 +51,12 @@ else {
                }
                if (responseCount == friendCount) {
                   var responseString = "";
-                  if (transferTo.length > 1) {
+                  console.log(transferTo);
+                  if (transferTo.length == 0) {
+                     responseString = "I couldn't find anyone on your friends list with the name " + friend;
+                     console.log(responseString);
+                  }
+                  else if (transferTo.length > 1) {
                      multipleFriendsFlag = true;
                      responseString += "You have multiple friends with the name, " + friend + ". Say ";
                      for (var j = 0; j < transferTo.length; j++)
@@ -64,9 +74,14 @@ else {
                      responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to " + friend + "? Please say complete transfer or cancel transfer.";
                      console.log(responseString);
                   }
+                  console.log("responses received");
                }
             });
          }
+      });
+      message.on('error', function() {
+         console.log(message);
+         console.log("I can't access your friends list right now. Please try again later.");
       });
    });
 }
@@ -80,6 +95,10 @@ function processFriend(friendId, callback) {
       message.on('end', function() {
          var friendObj = JSON.parse(body);
          callback(friendObj);
+      });
+      message.on('error', function() {
+         console.log(message);
+         callback(null);
       });
    });
 }
