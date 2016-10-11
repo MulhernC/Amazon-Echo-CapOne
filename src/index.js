@@ -11,7 +11,7 @@
 /**
  * App ID for the skill
  */
-var APP_ID =  "amzn1.ask.skill.3498e299-c62e-4251-bdcd-42925085447d"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+var APP_ID =  "amzn1.ask.skill.345c7f5a-160f-4a3e-99c8-ced29f7ede90"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 
 /**
  * The AlexaSkill prototype and helper functions
@@ -73,7 +73,7 @@ CapitalOne.prototype.intentHandlers = {
         if ((dollars == null && cents == null) || (isNaN(dollars) && isNaN(cents))) {
             response.tell("I couldn't understand that. Please try your transfer again.");
         }
-        if (dollars <= 0 || cents <= 0){
+        if ((dollars != null && dollars <= 0) || (cents != null && cents <= 0)){
             response.tell("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
         }    
         else {
