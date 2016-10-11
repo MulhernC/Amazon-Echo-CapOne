@@ -2,9 +2,11 @@ var dollars = null;
 var cents = null;
 var friend = null;
 var transferTo = [];
+var multipleFriendsFlag = false;
 var myId = "57f5aeb9360f81f104543a71";
 var http = require('http');
 
+resetSavedValues();
 dollars = 100;
 cents = 50;
 friend = "melinda";
@@ -33,7 +35,6 @@ else {
       message.on('end', function() {
          // Data reception is done, do whatever with it!
          var friends = JSON.parse(body);
-         console.log(friends[0]);
          var friendCount = friends.length;
          var responseCount = 0;
 
@@ -44,8 +45,25 @@ else {
                   transferTo.push(obj);
                }
                if (responseCount == friendCount) {
-                  var responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to " + friend + "? Please say complete transfer or cancel transfer.";
-                  console.log(responseString);
+                  var responseString = "";
+                  if (transferTo.length > 1) {
+                     multipleFriendsFlag = true;
+                     responseString += "You have multiple friends with the name, " + friend + ". Say ";
+                     for (var j = 0; j < transferTo.length; j++)
+                     {
+                        responseString += j + " for " + friend + " " + transferTo[j].last_name;
+                        if (j + 1 != transferTo.length) {
+                           responseString += ", ";
+                        }
+                        else {
+                           responseString += ".";
+                        }
+                     }
+                  }
+                  else {
+                     responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to " + friend + "? Please say complete transfer or cancel transfer.";
+                     console.log(responseString);
+                  }
                }
             });
          }
@@ -61,29 +79,30 @@ function processFriend(friendId, callback) {
       });
       message.on('end', function() {
          var friendObj = JSON.parse(body);
-         console.log(friendObj.first_name);
          callback(friendObj);
       });
    });
 }
 
 function formatMoney(dollars, cents) {
-    var responseString = "";
+   var responseString = "";
         
-    if (dollars != null && cents != null) {
-        responseString += dollars + " dollar" + (dollars == "1" ? "" : "s") + " and " + cents + " cent" + (cents == "1" ? "" : "s")
+   if (dollars != null && cents != null) {
+      responseString += dollars + " dollar" + (dollars == "1" ? "" : "s") + " and " + cents + " cent" + (cents == "1" ? "" : "s")
+   }
+   else if (dollars != null) {
+      responseString += dollars + " dollar" + (dollars == "1" ? "" : "s")
     }
-    else if (dollars != null) {
-        responseString += dollars + " dollar" + (dollars == "1" ? "" : "s")
-    }
-    else if (cents != null) {
-        responseString += cents + " cent" + (cents == "1" ? "" : "s")
-    }
+   else if (cents != null) {
+      responseString += cents + " cent" + (cents == "1" ? "" : "s")
+   }
 
-    return responseString;
+   return responseString;
 }
 
 function resetSavedValues() {
-    dollars = null;
-    cents = null;
+   dollars = null;
+   cents = null;
+   friend = null;
+   transferTo = [];
 }
