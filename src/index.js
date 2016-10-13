@@ -34,6 +34,7 @@ var transferTo = [];
 var multipleFriendsFlag = false;
 var myId = "57f5aeb9360f81f104543a71";
 var http = require('http');
+var url = "http://capitalone-rest-api.herokuapp.com/api/";
 
 
 // Extend AlexaSkill
@@ -62,6 +63,8 @@ CapitalOne.prototype.intentHandlers = {
     // register custom intent handlers
     "TransferIntent": function (intent, session, response) {
         resetSavedValues();
+        var responseString = "";
+
         dollars = intent.slots.dollar_amount.value;
         cents = intent.slots.cent_amount.value;
         friend = intent.slots.friend_name.value;
@@ -74,15 +77,14 @@ CapitalOne.prototype.intentHandlers = {
            cents = null;
         }
 
-        if ((dollars == null && cents == null) || (isNaN(dollars) && isNaN(cents))) {
+        if (dollars == null && cents == null) {
            response.tell("I couldn't understand that. Please try your transfer again.");
         }
         if ((dollars != null && dollars <= 0) || (cents != null && cents <= 0)){
            response.tell("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
         }    
-        respsone.tell("here");
         else {
-           http.get("http://capitalone-rest-api.herokuapp.com/api/customers/" + myId + "/friends", function(message)
+           http.get(url + "customers/" + myId + "/friends", function(message)
            {
               var body = '';
               message.on('data', function(d) {
@@ -101,7 +103,6 @@ CapitalOne.prototype.intentHandlers = {
                           transferTo.push(obj);
                        }
                        if (responseCount == friendCount) {
-                          var responseString = "";
                           if (transferTo.length == 0) {
                              responseString = "I couldn't find anyone on your friends list with the name " + friend;
                              response.tell(responseString);
@@ -121,7 +122,7 @@ CapitalOne.prototype.intentHandlers = {
                              }
                           }
                           else {
-                             responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to " + friend + "? Please say complete transfer or cancel transfer.";
+                             responseString += "Would you like to transfer " + formatMoney(dollars, cents) + " to " + friend + "? Please say complete transfer or cancel transfer.";
                              response.ask(responseString, responseString);
                           }
                        }
@@ -159,7 +160,7 @@ CapitalOne.prototype.intentHandlers = {
 };
 
 function processFriend(friendId, callback) {
-   http.get("http://capitalone-rest-api.herokuapp.com/api/customers/" + friendId, function(message) {
+   http.get(url + "customers/" + friendId, function(message) {
       var body = '';
       message.on('data', function(d) {
          body += d;
