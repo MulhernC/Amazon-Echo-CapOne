@@ -80,7 +80,7 @@ CapitalOne.prototype.intentHandlers = {
         if (dollars == null && cents == null) {
            response.tell("I couldn't understand that. Please try your transfer again.");
         }
-        if ((dollars != null && dollars <= 0) || (cents != null && cents <= 0)){
+        if ((dollars != null && dollars <= 0) || (cents != null && cents <= 0) || cents > 100){
            response.tell("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
         }    
         else {
