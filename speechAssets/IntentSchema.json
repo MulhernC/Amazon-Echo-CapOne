@@ -59,6 +59,16 @@
       ]
     },
     {
+      "intent": "ChooseFriendIntent",
+      "slots":
+      [
+        {
+          "name": "friend_number",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
       "intent": "AMAZON.HelpIntent"
     }
   ]

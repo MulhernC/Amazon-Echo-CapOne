@@ -35,6 +35,7 @@ var multipleFriendsFlag = false;
 var myId = "57f5aeb9360f81f104543a71";
 var http = require('http');
 var url = "http://capitalone-rest-api.herokuapp.com/api/";
+var sessionEnded = true;
 
 
 // Extend AlexaSkill
@@ -50,24 +51,26 @@ CapitalOne.prototype.eventHandlers.onSessionStarted = function (sessionStartedRe
 CapitalOne.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
     console.log("CapitalOne onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
     var speechOutput = "Welcome to Capital One! You can perform banking transactions.";
-    response.tell(speechOutput);
+    response.ask(speechOutput, "Say something like transfer five dollars and three cents to Bob");
 };
 
 CapitalOne.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
     console.log("CapitalOne onSessionEnded requestId: " + sessionEndedRequest.requestId
         + ", sessionId: " + session.sessionId);
+    resetSavedValues();
     // any cleanup logic goes here
 };
 
 CapitalOne.prototype.intentHandlers = {
     // register custom intent handlers
     "TransferIntent": function (intent, session, response) {
-        resetSavedValues();
         var responseString = "";
 
         dollars = intent.slots.dollar_amount.value;
         cents = intent.slots.cent_amount.value;
         friend = intent.slots.friend_name.value;
+        transferTo = [];
+        multipleFriendsFlag = false;
 
         if (dollars == "" || isNaN(dollars)) {
            dollars = null;
@@ -80,7 +83,7 @@ CapitalOne.prototype.intentHandlers = {
         if (dollars == null && cents == null) {
            response.tell("I couldn't understand that. Please try your transfer again.");
         }
-        if ((dollars != null && dollars <= 0) || (cents != null && (cents <= 0 || cents > 100))) {
+        if ((dollars != null && dollars <= 0) || (cents != null && (cents <= 0 || cents >= 100))) {
            response.tell("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
         }    
         else {
@@ -101,6 +104,7 @@ CapitalOne.prototype.intentHandlers = {
                        responseCount++;
                        if (obj.first_name.toLowerCase() == friend.toLowerCase()) {
                           transferTo.push(obj);
+                          transferTo.push(obj);
                        }
                        if (responseCount == friendCount) {
                           if (transferTo.length == 0) {
@@ -109,7 +113,7 @@ CapitalOne.prototype.intentHandlers = {
                           }
                           else if (transferTo.length > 1) {
                              multipleFriendsFlag = true;
-                             responseString += "You have multiple friends with the name, " + friend + ". Say ";
+                             responseString = "You have multiple friends with the name " + friend + ". Say ";
                              for (var j = 0; j < transferTo.length; j++)
                              {
                                 responseString += j + " for " + friend + " " + transferTo[j].last_name;
@@ -120,9 +124,12 @@ CapitalOne.prototype.intentHandlers = {
                                    responseString += ".";
                                 }
                              }
+                             sessionEnded = false;
+                             response.tellWithoutEnd(responseString);
                           }
                           else {
-                             responseString += "Would you like to transfer " + formatMoney(dollars, cents) + " to " + friend + "? Please say complete transfer or cancel transfer.";
+                             responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.";
+                             sessionEnded = false;
                              response.ask(responseString, responseString);
                           }
                        }
@@ -137,12 +144,11 @@ CapitalOne.prototype.intentHandlers = {
         }
     },
     "ConfirmTransferIntent": function (intent, session, response) {
-        if (dollars != null || cents != null) {
-            response.tell("Transferring " + formatMoney(dollars, cents) + " to " + friend + ".");
-            resetSavedValues();
+        if ((dollars != null || cents != null) && multipleFriendsFlag == false) {
+            response.tellWithCard("Transferring " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + ".");
         }
         else {
-            response.tell("Your transaction can't be processed. Please try again.");
+            response.tellWithoutEnd("Your transaction can't be processed. Please try again.");
         }
     },
     "DenyTransferIntent": function (intent, session, response) {
@@ -152,7 +158,18 @@ CapitalOne.prototype.intentHandlers = {
         else {
             response.tell("There is no transfer pending approval.");
         }
-        resetSavedValues();
+    },
+    "ChooseFriendIntent": function (intent, session, response) {
+        if (multipleFriendsFlag) {
+            if (intent.slots.friend_number.value >= transferTo.length) {
+                response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (transferTo.length - 1));
+            }
+            else {
+                transferTo[0] = transferTo[intent.slots.friend_number.value];
+                multipleFriendsFlag = false;
+                response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
+            }
+        }
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
         response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to John");
@@ -197,6 +214,7 @@ function resetSavedValues() {
    cents = null;
    friend = null;
    transferTo = [];
+   multipleFriendsFlag = false;
 }
 
 // Create the handler that responds to the Alexa Request.
