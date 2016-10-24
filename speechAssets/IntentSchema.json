@@ -59,11 +59,11 @@
       ]
     },
     {
-      "intent": "ChooseFriendIntent",
+      "intent": "ChooseNumberIntent",
       "slots":
       [
         {
-          "name": "friend_number",
+          "name": "number",
           "type": "AMAZON.NUMBER"
         }
       ]

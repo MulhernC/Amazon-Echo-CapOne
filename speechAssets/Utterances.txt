@@ -8,4 +8,4 @@ ConfirmTransferIntent {confirm_syn} account {transfer_syn}
 ConfirmTransferIntent {confirm_syn} {transfer_syn}
 DenyTransferIntent {deny_syn} account {transfer_syn}
 DenyTransferIntent {deny_syn} {transfer_syn}
-ChooseFriendIntent {friend_number}
+ChooseNumberIntent {number}

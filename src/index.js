@@ -32,10 +32,10 @@ var cents = null;
 var friend = null;
 var transferTo = [];
 var multipleFriendsFlag = false;
+var multipleAccountsFlag = false;
 var myId = "57f5aeb9360f81f104543a71";
 var http = require('http');
 var url = "http://capitalone-rest-api.herokuapp.com/api/";
-var sessionEnded = true;
 
 
 // Extend AlexaSkill
@@ -71,6 +71,7 @@ CapitalOne.prototype.intentHandlers = {
         friend = intent.slots.friend_name.value;
         transferTo = [];
         multipleFriendsFlag = false;
+        multipleAccountsFlag = false;
 
         if (dollars == "" || isNaN(dollars)) {
            dollars = null;
@@ -123,12 +124,10 @@ CapitalOne.prototype.intentHandlers = {
                                    responseString += ".";
                                 }
                              }
-                             sessionEnded = false;
                              response.tellWithoutEnd(responseString);
                           }
                           else {
                              responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.";
-                             sessionEnded = false;
                              response.ask(responseString, responseString);
                           }
                        }
@@ -161,7 +160,7 @@ CapitalOne.prototype.intentHandlers = {
             response.tell("There is no transfer pending approval.");
         }
     },
-    "ChooseFriendIntent": function (intent, session, response) {
+    "ChooseNumberIntent": function (intent, session, response) {
         if (multipleFriendsFlag) {
             if (intent.slots.friend_number.value >= transferTo.length) {
                 response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (transferTo.length - 1));
@@ -171,6 +170,9 @@ CapitalOne.prototype.intentHandlers = {
                 multipleFriendsFlag = false;
                 response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
             }
+        }
+        else if (multipleAccountsFlag) {
+
         }
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
@@ -217,6 +219,7 @@ function resetSavedValues() {
    friend = null;
    transferTo = [];
    multipleFriendsFlag = false;
+   multipleAccountsFlag = false;
 }
 
 // Create the handler that responds to the Alexa Request.
