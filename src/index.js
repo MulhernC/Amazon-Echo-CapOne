@@ -107,6 +107,12 @@ CapitalOne.prototype.intentHandlers = {
                           transferTo.push(obj);
                        }
                        if (responseCount == friendCount) {
+                          var multFriendObj = getMultipleFriends();
+
+                          tellerMethod(getMultipleFriends(), response);
+                          tellerMethod(getMultipleAccounts(), response);
+
+                        /*
                           if (transferTo.length == 0) {
                              responseString = "I couldn't find anyone on your friends list with the name " + friend;
                              response.tell(responseString);
@@ -130,6 +136,7 @@ CapitalOne.prototype.intentHandlers = {
                              responseString = "Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.";
                              response.ask(responseString, responseString);
                           }
+                          */
                        }
                     });
                  }
@@ -162,23 +169,101 @@ CapitalOne.prototype.intentHandlers = {
     },
     "ChooseNumberIntent": function (intent, session, response) {
         if (multipleFriendsFlag) {
-            if (intent.slots.friend_number.value >= transferTo.length) {
+            if (intent.slots.number.value >= transferTo.length) {
                 response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (transferTo.length - 1));
             }
             else {
-                transferTo[0] = transferTo[intent.slots.friend_number.value];
+                transferTo[0] = transferTo[intent.slots.number.value];
                 multipleFriendsFlag = false;
+                tellerMethod(getMultipleAccounts(), response);
                 response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
             }
         }
         else if (multipleAccountsFlag) {
-
+          if (intent.slots.number.value >= accounts.length) {
+                response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (transferTo.length - 1));
+          }
+          else {
+            accounts[0] = accounts[intent.slots.number.value];
+            multipleAccountsFlag = false;
+            response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + " " + accounts[0].type + " account? Please say complete transfer or cancel transfer.");
+          }
         }
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
         response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to John");
     }
 };
+
+function tellerMethod(tellObj, response) {
+  if (tellObj != null) {
+    if (tellObj.tell == "tell") {
+      response.tell(tellObj.responseString);
+    }
+    else if (tellObj.tell == "tellWithoutEnd") {
+      response.tellWithoutEnd(tellObj.responseString);
+    }
+    else if (tellObj.tell == "tellWithCard") {
+      response.tellWithCard(tellObj.responseString);
+    }
+    else if (tellObj.tell == "ask") {
+      response.ask(responseString, responseString);
+    }
+    else if (tellObj.tell == "askWithCard") {
+      response.askWithCard(responseString, responseString);
+    }
+  }
+}
+
+function getMultipleAccounts() {
+  var responseString = "";
+  if (accounts.length == 0) {
+    responseString = "I couldn't find any accounts for " + friend;
+    return {"tell": "tell", "responseString": responseString};
+  }
+  else if (accounts.length > 1) {
+    multipleAccountsFlag == true;
+    responseString += transferTo[0].first_name + " " + transferTo[0].last_name + " has more than one account. Say ";
+
+     for (var i = 0; i < accounts.length; i++) {
+        responseString += i + " for " + accounts[i].type;
+        if (i + 1 != accounts.length) {
+           responseString += ", ";
+        }
+        else {
+           responseString += ".";
+        }
+     }
+     return {"tell": "tellWithoutEnd", "responseString": responseString};
+  }
+
+  return null;
+}
+
+function getMultipleFriends() {
+  var responseString = "";
+  if (transferTo.length == 0) {
+     responseString = "I couldn't find anyone on your friends list with the name " + friend;
+     return {"tell": "tell", "responseString": responseString};
+  }
+  else if (transferTo.length > 1) {
+     multipleFriendsFlag = true;
+     responseString = "You have multiple friends with the name " + friend + ". Say ";
+     for (var j = 0; j < transferTo.length; j++)
+     {
+        responseString += j + " for " + friend + " " + transferTo[j].last_name;
+        if (j + 1 != transferTo.length) {
+           responseString += ", ";
+        }
+        else {
+           responseString += ".";
+        }
+     }
+     return {"tell": "tellWithoutEnd", "responseString": responseString};
+  }
+
+  return null;
+}
 
 function processFriend(friendId, callback) {
    http.get(url + "customers/" + friendId, function(message) {
