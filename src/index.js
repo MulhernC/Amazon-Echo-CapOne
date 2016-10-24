@@ -81,10 +81,10 @@ CapitalOne.prototype.intentHandlers = {
         }
 
         if (dollars == null && cents == null) {
-           response.tell("I couldn't understand that. Please try your transfer again.");
+           response.tellWithoutEnd("I couldn't understand that. Please try your transfer again.");
         }
         if ((dollars != null && dollars <= 0) || (cents != null && (cents <= 0 || cents >= 100))) {
-           response.tell("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
+           response.tellWithoutEnd("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
         }    
         else {
            http.get(url + "customers/" + myId + "/friends", function(message)
@@ -103,7 +103,6 @@ CapitalOne.prototype.intentHandlers = {
                     processFriend(friends[i], function(obj) {
                        responseCount++;
                        if (obj.first_name.toLowerCase() == friend.toLowerCase()) {
-                          transferTo.push(obj);
                           transferTo.push(obj);
                        }
                        if (responseCount == friendCount) {
@@ -145,7 +144,9 @@ CapitalOne.prototype.intentHandlers = {
     },
     "ConfirmTransferIntent": function (intent, session, response) {
         if ((dollars != null || cents != null) && multipleFriendsFlag == false) {
-            response.tellWithCard("Transferring " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + ".");
+            var responseString = "Transferring " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + ".";
+            resetSavedValues();
+            response.tellWithCard(responseString);
         }
         else {
             response.tellWithoutEnd("Your transaction can't be processed. Please try again.");
@@ -153,6 +154,7 @@ CapitalOne.prototype.intentHandlers = {
     },
     "DenyTransferIntent": function (intent, session, response) {
         if (dollars != null || cents != null) {
+            resetSavedValues();
             response.tell("Cancelling previous account transfer.");
         }
         else {
