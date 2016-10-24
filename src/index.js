@@ -31,6 +31,7 @@ var dollars = null;
 var cents = null;
 var friend = null;
 var transferTo = [];
+var accounts = [];
 var multipleFriendsFlag = false;
 var multipleAccountsFlag = false;
 var myId = "57f5aeb9360f81f104543a71";
@@ -110,7 +111,21 @@ CapitalOne.prototype.intentHandlers = {
                           var multFriendObj = getMultipleFriends();
 
                           tellerMethod(getMultipleFriends(), response);
-                          tellerMethod(getMultipleAccounts(), response);
+                          http.get(url + "customers/" + transferTo[0]._id + "/accounts", function(message) {
+                            var body = '';
+                            message.on('data', function(d) {
+                              body += d;
+                            });
+                            message.on('end', function() {
+                              accounts = JSON.parse(body);
+                              tellerMethod(getMultipleAccounts(), response);
+                              response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
+                            })
+                            message.on('error', function() {
+                              console.log(message);
+                              response.tell("I couldn't access that friends accounts right now. Please try again later.");
+                            });
+                          });
 
                         /*
                           if (transferTo.length == 0) {
