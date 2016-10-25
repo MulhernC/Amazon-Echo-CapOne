@@ -47,7 +47,7 @@ CapitalOne.prototype = Object.create(AlexaSkill.prototype);
 CapitalOne.prototype.constructor = CapitalOne;
 
 CapitalOne.prototype.eventHandlers.onSessionStarted = function (sessionStartedRequest, session) {
-    console.log("HelloWorld onSessionStarted requestId: " + sessionStartedRequest.requestId
+    console.log("CapitalOne onSessionStarted requestId: " + sessionStartedRequest.requestId
         + ", sessionId: " + session.sessionId);
     // any initialization logic goes here
 };
@@ -88,54 +88,61 @@ CapitalOne.prototype.intentHandlers = {
 
         if (dollars == null && cents == null) {
            response.tellWithoutEnd("I couldn't understand that. Please try your transfer again.");
+           return;
         }
-        if ((dollars != null && dollars <= 0) || (cents != null && (cents <= 0 || cents >= 100))) {
-           response.tellWithoutEnd("I couldn't understand that. Please prompt a valid amount between 0 and 5000 dollars.");
+        else if ((dollars != null && dollars <= 0) || (cents != null && (cents <= 0 || cents >= 100))) {
+           response.tellWithoutEnd("I couldn't understand that. Please try your transfer again with a valid amount between 0 and 5000 dollars.");
+           return;
         }    
         else {
-           http.get(url + "customers/" + myId + "/friends", function(message)
-           {
-              var body = '';
-              message.on('data', function(d) {
-                 body += d;
-              });
-              message.on('end', function() {
-                 // Data reception is done, do whatever with it!
-                 var friends = JSON.parse(body);
-                 var friendCount = friends.length;
-                 var responseCount = 0;
+          getFriendsList(myId, function(friends) {
+         // Data reception is done, do whatever with it!
+           if (friends == null) {
+            response.tell("I couldn't access your friends list. Please try your transfer again.");
+            return;
+           }
+           else {
+             var friendCount = friends.length;
+             var responseCount = 0;
 
-                 for (var i = 0; i < friends.length; i++) {
-                    processFriend(friends[i], function(obj) {
-                       responseCount++;
-                       if (obj.first_name.toLowerCase() == friend.toLowerCase()) {
-                          transferTo.push(obj);
-                          transferTo.push(obj);
-                       }
-                       if (responseCount == friendCount) {
-                          tellerMethod(getMultipleFriends(), response);
-                          var testId = "57f5af2b360f81f104543a72";
-                          //use transferTo[0]._id instead of testId
-                          getAccounts(testId, function(accountsObj) {
-                            accounts = accountsObj;
-                            tellerMethod(getMultipleAccounts(), response);
-                            if (accounts == null) {
-                              response.tell("I couldn't access that friends accounts right now. Please try again later.");
-                            }
-                            else {
-                              response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
-                            }
-                          });
-                       }
-                    });
-                 }
-              });
-              message.on('error', function() {
-                 console.log(message);
-                 response.tell("I can't access your friends list right now. Please try again later.");
-              });
-           });
-        }
+             for (var i = 0; i < friends.length; i++) {
+                processFriend(friends[i], function(obj) {
+                   responseCount++;
+                   if (obj != null && obj.first_name.toLowerCase() == friend.toLowerCase()) {
+                      transferTo.push(obj);
+                      transferTo.push(obj);
+                   }
+                   if (responseCount == friendCount) {
+                      var multipleFriendsObj = getMultipleFriends();
+                      tellerMethod(multipleFriendsObj, response);
+                      if (multipleFriendsObj != null) {
+                        return;
+                      }
+                      var testId = "57f5af2b360f81f104543a72";
+                      //use transferTo[0]._id instead of testId
+                      getAccounts(testId, function(accountsObj) {
+                        accounts = accountsObj;
+                        var multipleAccountsObj = getMultipleAccounts();
+                        tellerMethod(multipleAccountsObj, response);
+                        if (multipleAccountsObj != null) {
+                          return;
+                        }
+
+                        if (accounts == null) {
+                          response.tell("I couldn't access that friends accounts right now. Please try again later.");
+                          return;
+                        }
+                        else {
+                          response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
+                          return;
+                        }
+                      });
+                   }
+                });
+             }
+            }
+        });
+      }
     },
     "ConfirmTransferIntent": function (intent, session, response) {
         if (multipleFriendsFlag) {
@@ -145,27 +152,32 @@ CapitalOne.prototype.intentHandlers = {
             tellerMethod(getMultipleAccounts(), response);
         }
         else if (dollars != null || cents != null) {
-            var responseString = "Transferring " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + ".";
+            var responseString = "Transferred " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + ".";
             resetSavedValues();
             response.tellWithCard(responseString);
+            return;
         }
         else {
             response.tellWithoutEnd("There is no transfer pending approval.");
+            return;
         }
     },
     "DenyTransferIntent": function (intent, session, response) {
         if (dollars != null || cents != null) {
             resetSavedValues();
             response.tell("Cancelling previous account transfer.");
+            return;
         }
         else {
             response.tell("There is no transfer pending approval.");
+            return;
         }
     },
     "ChooseNumberIntent": function (intent, session, response) {
         if (multipleFriendsFlag) {
             if (intent.slots.number.value >= transferTo.length) {
                 response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (transferTo.length - 1));
+                return;
             }
             else {
                 var selectedObj = transferTo[intent.slots.number.value];
@@ -178,12 +190,14 @@ CapitalOne.prototype.intentHandlers = {
                   accounts = accountObj;
                   tellerMethod(getMultipleAccounts(), response);
                   response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
+                  return;
                 });
             }
         }
         else if (multipleAccountsFlag) {
           if (intent.slots.number.value >= accounts.length) {
-                response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (transferTo.length - 1));
+            response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (transferTo.length - 1));
+            return;
           }
           else {
             var selectedObj = accounts[intent.slots.number.value];
@@ -191,16 +205,35 @@ CapitalOne.prototype.intentHandlers = {
             accounts.push(selectedObj);
             multipleAccountsFlag = false;
             response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + " " + accounts[0].type + " account? Please say complete transfer or cancel transfer.");
+            return;
           }
         }
         else {
           response.tell("Please make sure you have a pending transfer before selecting any additional options.");
+          return;
         }
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
         response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to John");
     }
 };
+
+function getFriendsList(customerId, callback) {
+  http.get(url + "customers/" + customerId + "/friends", function(message) {
+      var body = '';
+      message.on('data', function(d) {
+        body += d;
+      });
+      message.on('end', function() {
+        callback(JSON.parse(body));
+      });
+      message.on('error', function() {
+        console.log(message);
+        var returnArr = [];
+        callback(returnArr);
+      });
+  });
+}
 
 function getAccounts(customerId, callback) {
   http.get(capOneUrl + "customers/" + customerId + "/accounts" + capOneKey, function(message) {
