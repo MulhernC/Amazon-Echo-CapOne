@@ -34,9 +34,12 @@ var transferTo = [];
 var accounts = [];
 var multipleFriendsFlag = false;
 var multipleAccountsFlag = false;
-var myId = "57f5aeb9360f81f104543a71";
+var myId = "580e9b9ed15f730003173037";
 var http = require('http');
 var url = "http://capitalone-rest-api.herokuapp.com/api/";
+var capOneUrl = "http://api.reimaginebanking.com/";
+var capOneKey = "?key=a25516d86f4912c66ad15823b82fc67c";
+
 
 
 // Extend AlexaSkill
@@ -71,6 +74,7 @@ CapitalOne.prototype.intentHandlers = {
         cents = intent.slots.cent_amount.value;
         friend = intent.slots.friend_name.value;
         transferTo = [];
+        accounts = [];
         multipleFriendsFlag = false;
         multipleAccountsFlag = false;
 
@@ -108,10 +112,13 @@ CapitalOne.prototype.intentHandlers = {
                           transferTo.push(obj);
                        }
                        if (responseCount == friendCount) {
-                          var multFriendObj = getMultipleFriends();
-
                           tellerMethod(getMultipleFriends(), response);
-                          http.get(url + "customers/" + transferTo[0]._id + "/accounts", function(message) {
+                          if (multFriendObj != null) {
+                            return;
+                          }
+                          var testId = "57f5af2b360f81f104543a72";
+                          //use transferTo[0]._id instead of testId
+                          http.get(capOneUrl + "customers/" + testId + "/accounts" + capOneKey, function(message) {
                             var body = '';
                             message.on('data', function(d) {
                               body += d;
@@ -120,7 +127,7 @@ CapitalOne.prototype.intentHandlers = {
                               accounts = JSON.parse(body);
                               tellerMethod(getMultipleAccounts(), response);
                               response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
-                            })
+                            });
                             message.on('error', function() {
                               console.log(message);
                               response.tell("I couldn't access that friends accounts right now. Please try again later.");
@@ -164,7 +171,13 @@ CapitalOne.prototype.intentHandlers = {
         }
     },
     "ConfirmTransferIntent": function (intent, session, response) {
-        if ((dollars != null || cents != null) && multipleFriendsFlag == false) {
+        if (multipleFriendsFlag) {
+            tellerMethod(getMultipleFriends(), response);
+        }
+        else if (multipleAccountsFlag) {
+            tellerMethod(getMultipleAccounts(), response);
+        }
+        else if (dollars != null || cents != null) {
             var responseString = "Transferring " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + ".";
             resetSavedValues();
             response.tellWithCard(responseString);
@@ -204,6 +217,7 @@ CapitalOne.prototype.intentHandlers = {
             response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + " " + accounts[0].type + " account? Please say complete transfer or cancel transfer.");
           }
         }
+        response.tell("Please make sure you have a pending transfer before selecting any additional options.");
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
         response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to John");
@@ -237,7 +251,7 @@ function getMultipleAccounts() {
     return {"tell": "tell", "responseString": responseString};
   }
   else if (accounts.length > 1) {
-    multipleAccountsFlag == true;
+    multipleAccountsFlag = true;
     responseString += transferTo[0].first_name + " " + transferTo[0].last_name + " has more than one account. Say ";
 
      for (var i = 0; i < accounts.length; i++) {
@@ -318,6 +332,7 @@ function resetSavedValues() {
    cents = null;
    friend = null;
    transferTo = [];
+   accounts = [];
    multipleFriendsFlag = false;
    multipleAccountsFlag = false;
 }
