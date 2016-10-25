@@ -97,7 +97,7 @@ CapitalOne.prototype.intentHandlers = {
         else {
           getFriendsList(myId, function(friends) {
          // Data reception is done, do whatever with it!
-           if (friends == null) {
+           if (friends == null || (friends != null && friends.length == 0)) {
             response.tell("I couldn't access your friends list. Please try your transfer again.");
             return;
            }
