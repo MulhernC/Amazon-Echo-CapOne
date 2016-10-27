@@ -110,7 +110,6 @@ CapitalOne.prototype.intentHandlers = {
                    responseCount++;
                    if (obj != null && obj.first_name.toLowerCase() == friend.toLowerCase()) {
                       transferTo.push(obj);
-                      transferTo.push(obj);
                    }
                    if (responseCount == friendCount) {
                       var multipleFriendsObj = getMultipleFriends();
@@ -129,7 +128,7 @@ CapitalOne.prototype.intentHandlers = {
                         }
 
                         if (accounts == null) {
-                          response.tell("I couldn't access that friends accounts right now. Please try again later.");
+                          response.tell("I can't access that friends accounts right now. Please try again later.");
                           return;
                         }
                         else {
