@@ -1,0 +1,75 @@
+{
+  "intents": [
+    {
+      "intent": "TransferIntent",
+      "slots":
+      [
+         {
+            "name": "dollar_syn",
+            "type": "DOLLAR_SYN"
+         },
+         {
+            "name": "cent_syn",
+            "type": "CENT_SYN"
+         },
+         {
+            "name": "transfer_syn",
+            "type": "TRANSFER_SYN"
+         },
+         {
+            "name": "dollar_amount",
+            "type": "AMAZON.NUMBER"
+         },
+         {
+            "name": "cent_amount",
+            "type": "AMAZON.NUMBER"
+         },
+         {
+            "name": "friend_name",
+            "type": "AMAZON.US_FIRST_NAME"
+         }
+      ]
+    },
+    {
+      "intent": "ConfirmTransferIntent",
+      "slots":
+      [
+         {
+            "name": "transfer_syn",
+            "type": "TRANSFER_SYN"
+         },
+         {
+            "name": "confirm_syn",
+            "type": "CONFIRM_SYN"
+         }
+      ]
+    },
+    {
+      "intent": "DenyTransferIntent",
+      "slots":
+      [
+         {
+            "name": "transfer_syn",
+            "type": "TRANSFER_SYN"
+         },
+         {
+            "name": "deny_syn",
+            "type": "DENY_SYN"
+         }
+      ]
+    },
+    {
+      "intent": "ChooseNumberIntent",
+      "slots":
+      [
+        {
+          "name": "number",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    }
+  ]
+}
