@@ -80,7 +80,7 @@ CapitalOne.prototype.intentHandlers = {
 
         if (dollars == "" || isNaN(dollars)) {
            dollars = null;
-        }        
+        }
 
         if (cents == "" || isNaN(cents)) {
            cents = null;
@@ -93,7 +93,7 @@ CapitalOne.prototype.intentHandlers = {
         else if ((dollars != null && dollars <= 0) || (cents != null && (cents <= 0 || cents >= 100))) {
            response.tellWithoutEnd("I couldn't understand that. Please try your transfer again with a valid amount between 0 and 5000 dollars.");
            return;
-        }    
+        }
         else {
           getFriendsList(myId, function(friends) {
          // Data reception is done, do whatever with it!
@@ -195,7 +195,7 @@ CapitalOne.prototype.intentHandlers = {
         }
         else if (multipleAccountsFlag) {
           if (intent.slots.number.value >= accounts.length) {
-            response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (transferTo.length - 1));
+            response.tellWithoutEnd("That number is not within the correct range. Please select a number between 0 and " + (accounts.length - 1));
             return;
           }
           else {
@@ -340,7 +340,7 @@ function processFriend(friendId, callback) {
 
 function formatMoney(dollars, cents) {
    var responseString = "";
-        
+
    if (dollars != null && cents != null) {
       responseString += dollars + " dollar" + (dollars == "1" ? "" : "s") + " and " + cents + " cent" + (cents == "1" ? "" : "s")
    }
