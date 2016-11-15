@@ -35,12 +35,9 @@ var accounts = [];
 var multipleFriendsFlag = false;
 var multipleAccountsFlag = false;
 var myId = "580e9b9ed15f730003173037";
+var myAccount = "5821240e17d9f90003c29f82";
 var http = require('http');
 var url = "http://capitalone-rest-api.herokuapp.com/api/";
-var capOneUrl = "http://api.reimaginebanking.com/";
-var capOneKey = "?key=a25516d86f4912c66ad15823b82fc67c";
-
-
 
 // Extend AlexaSkill
 CapitalOne.prototype = Object.create(AlexaSkill.prototype);
@@ -119,8 +116,9 @@ CapitalOne.prototype.intentHandlers = {
                       }
                       var testId = "57f5af2b360f81f104543a72";
                       //use transferTo[0]._id instead of testId
-                      getAccounts(testId, function(accountsObj) {
-                        accounts = accountsObj;
+                      getAccounts(transferTo[0]._id, function(accountsObj) {
+                        accounts = [];
+                        accounts.push(accountsObj);
                         var multipleAccountsObj = getMultipleAccounts();
                         tellerMethod(multipleAccountsObj, response);
                         if (multipleAccountsObj != null) {
@@ -146,14 +144,28 @@ CapitalOne.prototype.intentHandlers = {
     "ConfirmTransferIntent": function (intent, session, response) {
         if (multipleFriendsFlag) {
             tellerMethod(getMultipleFriends(), response);
+            return;
         }
         else if (multipleAccountsFlag) {
             tellerMethod(getMultipleAccounts(), response);
+            return;
         }
         else if (dollars != null || cents != null) {
-            var responseString = "Transferred " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + ".";
-            resetSavedValues();
-            response.tellWithCard(responseString);
+            var responseString = "";
+            processTransfer(function (postResponse) {
+              postResponse = JSON.parse(postResponse);
+              if (postResponse != null && postResponse.error != null) {
+                resetSavedValues();
+                response.tellWithCard(postResponse.error);
+                return;
+              }
+              else if (postResponse != null && postResponse.success != null) {
+                responseString = "Transferred " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + ".";
+                resetSavedValues();
+                response.tellWithCard(responseString);
+                return;
+              }
+            });
             return;
         }
         else {
@@ -185,7 +197,7 @@ CapitalOne.prototype.intentHandlers = {
                 multipleFriendsFlag = false;
                 var testId = "57f5af2b360f81f104543a72";
                 //use transferTo[0]._id instead
-                getAccounts(testId, function(accountObj) {
+                getAccounts(transferTo[0]._id, function(accountObj) {
                   accounts = accountObj;
                   tellerMethod(getMultipleAccounts(), response);
                   response.tellWithoutEnd("Would you like to transfer " + formatMoney(dollars, cents) + " to " + transferTo[0].first_name + " " + transferTo[0].last_name + "? Please say complete transfer or cancel transfer.");
@@ -235,7 +247,7 @@ function getFriendsList(customerId, callback) {
 }
 
 function getAccounts(customerId, callback) {
-  http.get(capOneUrl + "customers/" + customerId + "/accounts" + capOneKey, function(message) {
+  http.get(url + "customers/" + customerId + "/account", function(message) {
       var body = '';
       message.on('data', function(d) {
         body += d;
@@ -336,6 +348,39 @@ function processFriend(friendId, callback) {
          callback(null);
       });
    });
+}
+
+function processTransfer(callback) {
+  var transfer_data = JSON.stringify({
+      "type": "p2p",
+      "receiver": accounts[0]._id,
+      "amount": parseFloat((dollars == null ? 0 : dollars) + "." + (cents == null ? 0 : cents)),
+      "description": "Transfer from " + myAccount + " to " + accounts[0]._id,
+      "sender": myAccount
+  });
+
+  var options = {
+    hostname: 'capitalone-rest-api.herokuapp.com',
+    port: 80,
+    path: '/api/accounts/' + myAccount + '/transfers',
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(transfer_data)
+    }
+  };
+  
+  var postResponse = null;
+  var req = http.request(options, function(res) {
+    res.setEncoding('utf8');
+    postResponse = "";
+    res.on('data', function (body) {
+      postResponse += body;
+    });
+    res.on('end', function () {
+      callback(postResponse);
+    });
+  }).write(transfer_data);
 }
 
 function formatMoney(dollars, cents) {
