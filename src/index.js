@@ -99,6 +99,11 @@ CapitalOne.prototype.intentHandlers = {
        response.tellWithoutEnd("I couldn't understand that. Please try your transfer again.");
        return;
     }
+    // No friend is found
+    if (!friend){
+      response.tellWithoutEnd("No friend identified. Please try your transfer again.");
+      return;
+    }
     //Negative dollar amount, dollar amount greater than 5000 or cent amount out of range of 0 to 100
     else if ((dollars != null && dollars <= 0) || (dollars != null && dollars > 5000) || (cents != null && (cents < 0 || cents >= 100))) {
        resetSavedValues();
