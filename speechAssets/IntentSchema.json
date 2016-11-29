@@ -30,6 +30,7 @@
          }
       ]
     },
+    
     {
       "intent": "ConfirmTransferIntent",
       "slots":
@@ -67,6 +68,9 @@
           "type": "AMAZON.NUMBER"
         }
       ]
+    },
+    {
+      "intent": "BalanceEnquiryIntent"
     },
     {
       "intent": "AMAZON.HelpIntent"
