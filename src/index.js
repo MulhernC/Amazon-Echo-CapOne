@@ -242,7 +242,7 @@ CapitalOne.prototype.intentHandlers = {
             transferTo.push(selectedObj);   //put selected object as the first and only object in the transferees array
             multipleFriendsFlag = false;    //multiple friends is no longer true
             //get the accounts for this friend
-            getAccounts(transferTo[0]._id, function(accountObj) {
+            getAccounts(transferTo[0]._id, function(accountsObj) {
               accounts = [];
               accounts.push(accountsObj);           //push on account object
               var multipleAccountsObj = getMultipleAccounts();    //this is code for multiple accounts, however this was not implemented in
