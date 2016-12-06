@@ -30,6 +30,7 @@
          }
       ]
     },
+    
     {
       "intent": "ConfirmTransferIntent",
       "slots":
@@ -66,6 +67,20 @@
           "name": "number",
           "type": "AMAZON.NUMBER"
         }
+      ]
+    },
+     {
+      "intent": "BalanceEnquiryIntent",
+      "slots":
+      [
+        {
+            "name": "check_syn",
+            "type": "CHECK_SYN"
+         },
+         {
+            "name": "balance_syn",
+            "type": "BALANCE_SYN"
+         }
       ]
     },
     {
