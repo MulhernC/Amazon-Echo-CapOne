@@ -11,7 +11,7 @@
 /**
  * App ID for the skill
  */
-var APP_ID =  "amzn1.ask.skill.345c7f5a-160f-4a3e-99c8-ced29f7ede90"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+var APP_ID =  "amzn1.ask.skill.3498e299-c62e-4251-bdcd-42925085447d"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 
 /**
  * The AlexaSkill prototype and helper functions
@@ -279,6 +279,13 @@ CapitalOne.prototype.intentHandlers = {
         response.tell("Please make sure you have a pending transfer before selecting any additional options.");
         return;
       }
+  },
+  "BalanceEnquiryIntent": function (intent, session, response) {
+      getAccounts(myId, function(accountObj) {
+       var balance = accountObj.balance;
+       response.tell("Your balance is " + formatMoney(Math.floor(balance), Math.round(100 * (balance - Math.floor(balance)))));
+       return;
+    });
   },
   "AMAZON.HelpIntent": function (intent, session, response) {
       response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to John");
