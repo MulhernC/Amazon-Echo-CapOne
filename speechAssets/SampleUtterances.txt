@@ -10,3 +10,8 @@ DenyTransferIntent {deny_syn} account {transfer_syn}
 DenyTransferIntent {deny_syn} {transfer_syn}
 DenyTransferIntent {deny_syn}
 ChooseNumberIntent {number}
+BalanceEnquiryIntent balance
+BalanceEnquiryIntent Check my balance
+BalanceEnquiryIntent What is my balance 
+BalanceEnquiryIntent Check Balance
+BalanceEnquiryIntent Get my Balance

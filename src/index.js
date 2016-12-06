@@ -13,6 +13,7 @@
  */
 var APP_ID =  "amzn1.ask.skill.a6d744d2-f378-4ac9-a948-713aaec01f95"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 
+
 /**
  * The AlexaSkill prototype and helper functions
  */
@@ -247,7 +248,7 @@ CapitalOne.prototype.intentHandlers = {
             transferTo.push(selectedObj);   //put selected object as the first and only object in the transferees array
             multipleFriendsFlag = false;    //multiple friends is no longer true
             //get the accounts for this friend
-            getAccounts(transferTo[0]._id, function(accountObj) {
+            getAccounts(transferTo[0]._id, function(accountsObj) {
               accounts = [];
               accounts.push(accountsObj);           //push on account object
               var multipleAccountsObj = getMultipleAccounts();    //this is code for multiple accounts, however this was not implemented in
@@ -284,6 +285,13 @@ CapitalOne.prototype.intentHandlers = {
         response.tell("Please make sure you have a pending transfer before selecting any additional options.");
         return;
       }
+  },
+  "BalanceEnquiryIntent": function (intent, session, response) {
+      getAccounts(myId, function(accountObj) {
+       var balance = accountObj.balance;
+       response.tell("Your balance is " + formatMoney(Math.floor(balance), Math.round(100 * (balance - Math.floor(balance)))));
+       return;
+    });
   },
   "AMAZON.HelpIntent": function (intent, session, response) {
       response.ask("You can perform bank transactions.", "You can perform bank transactions. Try something like, transfer ten dollars and fifty cents to John");
