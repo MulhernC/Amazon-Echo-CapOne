@@ -8,4 +8,11 @@ ConfirmTransferIntent {confirm_syn} account {transfer_syn}
 ConfirmTransferIntent {confirm_syn} {transfer_syn}
 DenyTransferIntent {deny_syn} account {transfer_syn}
 DenyTransferIntent {deny_syn} {transfer_syn}
+DenyTransferIntent {deny_syn}
 ChooseNumberIntent {number}
+BalanceEnquiryIntent balance
+BalanceEnquiryIntent {check_syn} my {balance_syn}
+BalanceEnquiryIntent what is my account {balance_syn} 
+BalanceEnquiryIntent {check_syn} {balance_syn} 
+BalanceEnquiryIntent {check_syn} {balance_syn} in my account
+BalanceEnquiryIntent how much {balance_syn} is in my account 
