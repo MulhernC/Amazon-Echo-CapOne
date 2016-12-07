@@ -11,7 +11,8 @@
 /**
  * App ID for the skill
  */
-var APP_ID =  "amzn1.ask.skill.3498e299-c62e-4251-bdcd-42925085447d"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+var APP_ID =  "amzn1.ask.skill.345c7f5a-160f-4a3e-99c8-ced29f7ede90"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+
 
 /**
  * The AlexaSkill prototype and helper functions
@@ -41,7 +42,7 @@ var url = "http://capitalone-rest-api.herokuapp.com/api/";    //rest api url
 var myId = "580e9b9ed15f730003173037";                        //hardcoded id of customer for demonstration purposes
 var myAccount = "5821240e17d9f90003c29f82";                   //hardcoded id of account to transfer from for demonstration purposes
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    To remove hardcoded id's, account linking will need to be implemented. The details for account linking can be seen at: 
+//    To remove hardcoded id's, account linking will need to be implemented. The details for account linking can be seen at:
 //      https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/linking-an-alexa-user-with-a-user-in-your-system
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // Extend AlexaSkill
@@ -99,6 +100,11 @@ CapitalOne.prototype.intentHandlers = {
        response.tellWithoutEnd("I couldn't understand that. Please try your transfer again.");
        return;
     }
+    // No friend is found
+    if (!friend){
+      response.tellWithoutEnd("No friend identified. Please try your transfer again.");
+      return;
+    }
     //Negative dollar amount, dollar amount greater than 5000 or cent amount out of range of 0 to 100
     else if ((dollars != null && dollars <= 0) || (dollars != null && dollars > 5000) || (cents != null && (cents < 0 || cents >= 100))) {
        resetSavedValues();
@@ -120,7 +126,7 @@ CapitalOne.prototype.intentHandlers = {
 
           //go through all friend id's and get the customer object for each
           for (var i = 0; i < friends.length; i++) {
-            //http request to get friend object 
+            //http request to get friend object
             getCustomer(friends[i], function(obj) {
               responseCount++;      //customer object retrieved, increment responseCount
               //push a good object onto potential transferees
@@ -293,7 +299,7 @@ CapitalOne.prototype.intentHandlers = {
 };
 
 //http request for friends list
-//PRE:    customerId is the id of the customer to get the friends list for and 
+//PRE:    customerId is the id of the customer to get the friends list for and
 //          callback is a function that receives the response object as an argument.
 //POST:   The function calls callback with either an empty array or success array.
 function getFriendsList(customerId, callback) {
@@ -335,7 +341,7 @@ function getAccounts(customerId, callback) {
 }
 
 //method used for telling response objects
-//PRE:    response is the session response variable and 
+//PRE:    response is the session response variable and
 //tellObj objects are in the form of:
 //  tellObj = {
 //    tell: "tell|tellWithoutEnd|tellWithCard|ask|askWithCard",
@@ -393,7 +399,7 @@ function getMultipleAccounts() {
 }
 
 //get teller object for multiple friends
-//POST:     A teller object is returned if more than one friend is found with the name friend or no friend was found, 
+//POST:     A teller object is returned if more than one friend is found with the name friend or no friend was found,
 //            otherwise returns null. The multipleFriendsFlag flag is set.
 function getMultipleFriends() {
   var responseString = "";
@@ -468,7 +474,7 @@ function postTransfer(callback) {
       'Content-Length': Buffer.byteLength(transfer_data)
     }
   };
-  
+
   //perform http request for post
   var req = http.request(options, function(res) {
     res.setEncoding('utf8');
@@ -484,7 +490,7 @@ function postTransfer(callback) {
 
 //formatMoney puts dollars and cents into word form
 //PRE:    dollars or cents is not null.
-//POST:   the appropriate word form of money is returned.  
+//POST:   the appropriate word form of money is returned.
 function formatMoney(dollars, cents) {
    var responseString = "";
 
