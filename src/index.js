@@ -448,11 +448,20 @@ function getCustomer(customerId, callback) {
 //PRE:    accounts is not empty, dollars or cents is not null, and callback is a function that receives the response object as an argument
 //POST:   The function calls callback with the response object.
 function postTransfer(callback) {
+  if (cents == null) {
+    postCents = "0";
+  }
+  else if (cents < 10) {
+    postCents = "0" + cents;
+  }
+  else {
+    postCents = cents;
+  }
   //formate transfer into post object
   var transfer_data = JSON.stringify({
     "type": "p2p",
     "receiver": accounts[0]._id,
-    "amount": parseFloat((dollars == null ? 0 : dollars) + "." + (cents == null ? 0 : cents)),
+    "amount": parseFloat((dollars == null ? 0 : dollars) + "." + postCents),
     "description": "Transfer from " + myAccount + " to " + accounts[0]._id,
     "sender": myAccount
   });
