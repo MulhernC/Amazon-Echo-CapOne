@@ -1,7 +1,7 @@
 // 1) Put this file in ~/test
 // 2) Change path variables if necessary
-// 2) Change APP_ID to Lambda skill that connects to BST provided URL
-// 3) Go to home directory in terminal and run the command ./node_modules/mocha/bin/mocha
+// 3) Change APP_ID to Lambda skill that connects to BST provided URL
+// 4) Go to home directory in terminal and run the command ./node_modules/mocha/bin/mocha
 
 // hardcoded customer id: "580e9b9ed15f730003173037"
 // hardcoded account id: "5821240e17d9f90003c29f82"
