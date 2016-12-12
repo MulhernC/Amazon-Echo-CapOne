@@ -11,7 +11,7 @@
 /**
  * App ID for the skill
  */
-var APP_ID =  "amzn1.ask.skill.a6d744d2-f378-4ac9-a948-713aaec01f95"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+var APP_ID =  "amzn1.ask.skill.3498e299-c62e-4251-bdcd-42925085447d"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 
 
 /**
